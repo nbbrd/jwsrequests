@@ -32,9 +32,8 @@ import ec.tss.sa.SaProcessing;
 import ec.tss.xml.IXmlConverter;
 import ec.tstoolkit.algorithm.ProcessingContext;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
@@ -123,37 +122,27 @@ public class Requests {
         return xctx;
     }
 
-    public static <T, X extends IXmlConverter<T>> boolean writeX13(Path sfile, XmlX13Requests requests) {
+    public static <T, X extends IXmlConverter<T>> void writeX13(Path sfile, XmlX13Requests requests) throws IOException {
+        Files.createDirectories(sfile.getParent());
         File file = sfile.toFile();
-        try (FileOutputStream stream = new FileOutputStream(file)) {
-            //XMLOutputFactory factory=XMLOutputFactory.newInstance();
-            try (OutputStreamWriter writer = new OutputStreamWriter(stream, StandardCharsets.UTF_8)) {
-
-                Marshaller marshaller = XML_X13REQUESTS.createMarshaller();
-                marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-                marshaller.marshal(requests, writer);
-                writer.flush();
-                return true;
-            }
-        } catch (Exception ex) {
-            return false;
+        try {
+            Marshaller marshaller = XML_X13REQUESTS.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            marshaller.marshal(requests, file);
+        } catch (JAXBException ex) {
+            throw new IOException(ex);
         }
     }
 
-    public static <T, X extends IXmlConverter<T>> boolean writeTramoSeats(Path sfile, XmlTramoSeatsRequests requests) {
+    public static <T, X extends IXmlConverter<T>> void writeTramoSeats(Path sfile, XmlTramoSeatsRequests requests) throws IOException {
+        Files.createDirectories(sfile.getParent());
         File file = sfile.toFile();
-        try (FileOutputStream stream = new FileOutputStream(file)) {
-            //XMLOutputFactory factory=XMLOutputFactory.newInstance();
-            try (OutputStreamWriter writer = new OutputStreamWriter(stream, StandardCharsets.UTF_8)) {
-
-                Marshaller marshaller = XML_TRAMOSEATSREQUESTS.createMarshaller();
-                marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-                marshaller.marshal(requests, writer);
-                writer.flush();
-                return true;
-            }
-        } catch (Exception ex) {
-            return false;
+        try {
+            Marshaller marshaller = XML_TRAMOSEATSREQUESTS.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            marshaller.marshal(requests, file);
+        } catch (JAXBException ex) {
+            throw new IOException(ex);
         }
     }
 }
