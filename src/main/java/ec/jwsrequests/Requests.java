@@ -16,6 +16,7 @@
  */
 package ec.jwsrequests;
 
+import com.google.common.base.Strings;
 import ec.demetra.xml.core.XmlTs;
 import ec.demetra.xml.processing.XmlProcessingContext;
 import ec.demetra.xml.sa.tramoseats.XmlTramoSeatsAtomicRequest;
@@ -71,6 +72,7 @@ public class Requests {
                 xcur.setSpecification(xspec);
                 XmlTs xts = new XmlTs();
                 XmlTs.MARSHALLER.marshal(item.getTs(), xts);
+                applySaItemNameIfAvailable(item, xts);
                 xcur.setSeries(xts);
                 x13r.getItems().add(xcur);
             }
@@ -95,6 +97,7 @@ public class Requests {
                 xcur.setSpecification(xspec);
                 XmlTs xts = new XmlTs();
                 XmlTs.MARSHALLER.marshal(item.getTs(), xts);
+                applySaItemNameIfAvailable(item, xts);
                 xcur.setSeries(xts);
                 tsr.getItems().add(xcur);
             }
@@ -120,6 +123,12 @@ public class Requests {
         XmlProcessingContext xctx = new XmlProcessingContext();
         XmlProcessingContext.MARSHALLER.marshal(context, xctx);
         return xctx;
+    }
+
+    private static void applySaItemNameIfAvailable(SaItem item, XmlTs xts) {
+        if (!Strings.isNullOrEmpty(item.getName())) {
+            xts.setName(item.getName());
+        }
     }
 
     public static <T, X extends IXmlConverter<T>> void writeX13(Path sfile, XmlX13Requests requests) throws IOException {
