@@ -72,7 +72,7 @@ public class Requests {
                 xcur.setSpecification(xspec);
                 XmlTs xts = new XmlTs();
                 XmlTs.MARSHALLER.marshal(item.getTs(), xts);
-                applySaItemNameIfAvailable(item, xts);
+                fixTsName(item, xts);
                 xcur.setSeries(xts);
                 x13r.getItems().add(xcur);
             }
@@ -97,7 +97,7 @@ public class Requests {
                 xcur.setSpecification(xspec);
                 XmlTs xts = new XmlTs();
                 XmlTs.MARSHALLER.marshal(item.getTs(), xts);
-                applySaItemNameIfAvailable(item, xts);
+                fixTsName(item, xts);
                 xcur.setSeries(xts);
                 tsr.getItems().add(xcur);
             }
@@ -125,9 +125,15 @@ public class Requests {
         return xctx;
     }
 
-    private static void applySaItemNameIfAvailable(SaItem item, XmlTs xts) {
-        if (!Strings.isNullOrEmpty(item.getName())) {
-            xts.setName(item.getName());
+    private static void fixTsName(SaItem item, XmlTs xts) {
+        String saRawName = item.getRawName();
+        if (!Strings.isNullOrEmpty(saRawName)) {
+            xts.setName(saRawName);
+        } else {
+            String tsRawName = item.getTs().getRawName();
+            if (!Strings.isNullOrEmpty(tsRawName)) {
+                xts.setName(tsRawName);
+            }
         }
     }
 
